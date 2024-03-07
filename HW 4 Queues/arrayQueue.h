@@ -12,10 +12,10 @@ private:
     int front;
 	int back;
     int count;
-    static const int ARRAY_SIZE = 10;
+    static const int ARRAY_SIZE = 5;
     ItemType array_queue[ARRAY_SIZE];
 public:
-    arrayQueue() : back(-1), front(-1), count(0) { }
+    arrayQueue() : back(-1), front(0), count(0) { }
 
     bool isEmpty() const
     {
@@ -25,8 +25,10 @@ public:
 
     bool enqueue(const ItemType& newEntry)
     {
+        if (count >= ARRAY_SIZE) { return false; } //array at capacity
+
         count++;
-        back = back++ % ARRAY_SIZE;
+        back = (back + 1) % ARRAY_SIZE;
         array_queue[back] = newEntry;
         return true;
     }
@@ -37,7 +39,7 @@ public:
         if (canDequeue)
         {
             count--;
-            front = front++ % ARRAY_SIZE;
+            front = (front + 1) % ARRAY_SIZE;
             return true;
         }
         else { return false; }
@@ -48,16 +50,16 @@ public:
         bool canPeek = !isEmpty();
         if (canPeek)
         {
-            return array_queue[front+1];
+            return array_queue[front];
         }
         else { throw "Item not found!"; }
     }
 
     void displayQueue()
     {
-        for (int i = front+1; i <= back; i++)
+        for (int i = 0; i < count; i++)
         {
-            cout << array_queue[i] << endl;
+            cout << array_queue[(front + i) % ARRAY_SIZE] << endl;
         }
     }
 

@@ -3,27 +3,33 @@
 using namespace std;
 
 #include "arrayQueue.h"
+#include "priorityQueue.h"
 #include "event.h"
 
 int getMenuChoice();
+
+//Array Queue
 void enqueueToArrayQueue(arrayQueue<string>&);
 void dequeueToArrayQueue(arrayQueue<string>&);
 void isArrayQueueEmpty(arrayQueue<string>&);
 void displayArrayQueue(arrayQueue<string>&);
 void peekArrayQueue(arrayQueue<string>&);
 
+//Priority Queue
+void enqueueToPriorityQueue(priorityQueue<Event>&);
+
 int main()
 {
 	int menuChoice;
     arrayQueue<string> array_queue;
-    Event<string> event_1(10, 10, 'A');
+    priorityQueue<Event> priority_queue;
 
 	do
 	{
 		menuChoice = getMenuChoice();
 
         switch (menuChoice) {
-        case 1:
+        case 1://Array Queue
             enqueueToArrayQueue(array_queue);
             break;
         case 2:
@@ -37,6 +43,9 @@ int main()
             break;
         case 5:
             peekArrayQueue(array_queue);
+            break;
+        case 6://Priority Queue
+            enqueueToPriorityQueue(priority_queue);
             break;
         case 0:
             break;
@@ -57,13 +66,16 @@ int getMenuChoice() {
     cout << "1. Enqueue item to array queue." << endl;
 	cout << "2. Dequeue item from array queue." << endl;
 	cout << "3. Check if array queue is empty." << endl;
-    cout << "4. Dispaly array queue." << endl;
+    cout << "4. Display array queue." << endl;
     cout << "5. Peek top of array queue." << endl;
+    cout << "~Priority Queue Testing~" << endl;
+    cout << "6. Enqueue item to priority queue." << endl;
 
     cin >> userChoice;
     return userChoice;
 }
 
+//Array Queue Functions
 void displayArrayQueue(arrayQueue<string>& queue)
 {
     cout << "Array queue:" << endl;
@@ -103,4 +115,21 @@ void peekArrayQueue(arrayQueue<string>& queue)
         cout << "The front item is: " << queue.peekFront() << endl;
     }
     else { cout << "The array queue is empty, and cannot peak!" << endl; }
+}
+
+//Priority Queue Functions
+void enqueueToPriorityQueue(priorityQueue<Event>& queue)
+{
+    cout << "Enqueing four test items." << endl;
+
+    Event event1(1, 10, 'A');
+    Event event2(2, 20, 'A');
+    Event event3(3, 30, 'D');
+    Event event4(4, 40, 'D');
+
+    queue.enqueue(event1);
+    queue.enqueue(event2);
+    queue.enqueue(event3);
+    queue.enqueue(event4);
+    queue.displayQueue();
 }

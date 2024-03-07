@@ -18,13 +18,68 @@ private:
     static const int ARRAY_SIZE = 10;
     ItemType priority_queue[ARRAY_SIZE];
 public:
-    priorityQueue() : back(-1), front(-1), count(0) { }
+    priorityQueue() : back(-1), front(0), count(0) { }
 
     bool isEmpty() const
     {
         bool empty(count <= 0);
         return empty;
     }
+
+    bool enqueue(ItemType& newEntry)
+    {
+        if (!isEmpty())
+        {
+            for (int i = 0; i < count; i++) //loop through entire usable queue
+            {
+                int current_position = front + i % ARRAY_SIZE;
+                if (newEntry > priority_queue[current_position])
+                {
+                    count++;
+                    back = (back + 1) % ARRAY_SIZE;
+                    for (int j = i; j <= back; j++)
+                    {
+                        priority_queue[j + 1] = priority_queue[j];
+                    }
+                    priority_queue[i] = newEntry;
+                    return true;
+                }
+            }
+        }
+        else //priority queue is empty
+        {
+            count++;
+            back = (back + 1) % ARRAY_SIZE;
+            priority_queue[back] = newEntry;
+            return true;
+        }
+    }
+
+    bool dequeue()
+    {
+        return true;
+    }
+
+    ItemType peekFront() const
+    {
+        bool canPeek = !isEmpty();
+        if (canPeek)
+        {
+            return priority_queue[front];
+        }
+        else { throw "Item not found!"; }
+    }
+
+    void displayQueue()
+    {
+        for (int i = 0; i < count; i++)
+        {
+            cout << priority_queue[(front + i) % ARRAY_SIZE].getDuration() << endl;
+        }
+    }
+
+    ~priorityQueue() { }
+
 };
 
 #endif
