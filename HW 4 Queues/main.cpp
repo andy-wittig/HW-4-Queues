@@ -122,14 +122,14 @@ void enqueueToPriorityQueue(priorityQueue<Event>& queue)
 {
     cout << "Enqueing four test items." << endl;
 
-    Event event1(1, 10, 'A');
-    Event event2(2, 20, 'A');
-    Event event3(3, 30, 'D');
-    Event event4(4, 40, 'D');
-
+    Event event1(3, 1, 'D');
+    Event event2(12, 200, 'A');
+    Event event3(13, 400, 'A');
+    
     queue.enqueue(event1);
     queue.enqueue(event2);
     queue.enqueue(event3);
-    queue.enqueue(event4);
+    //should be 1, 400, 200
+
     queue.displayQueue();
 }

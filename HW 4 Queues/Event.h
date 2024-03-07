@@ -29,8 +29,14 @@ public:
 			if (duration > otherEvent.duration) { return true; }
 			else { return false; }
 		}
+		else if (type == 'D' && otherEvent.type == 'D')
+		{
+			if (duration > otherEvent.duration) { return true; }
+			else { return false; }
+		}
 	}
 
+	//getters and setters
 	int getDuration() const
 	{
 		return duration;

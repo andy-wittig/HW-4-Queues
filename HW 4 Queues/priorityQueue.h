@@ -30,26 +30,30 @@ public:
     {
         if (!isEmpty())
         {
-            for (int i = 0; i < count; i++) //loop through entire usable queue
+            for (int i = 0; i <= count; i++) //loop through entire usable queue
             {
                 int current_position = front + i % ARRAY_SIZE;
                 if (newEntry > priority_queue[current_position])
                 {
                     count++;
-                    back = (back + 1) % ARRAY_SIZE;
-                    for (int j = i; j <= back; j++)
-                    {
-                        priority_queue[j + 1] = priority_queue[j];
+                    back = (back + 1) % ARRAY_SIZE; //extend array
+                    for (int i = back; i > current_position; i--) { //shift array and add new element in
+                        priority_queue[i] = priority_queue[i - 1];
                     }
                     priority_queue[i] = newEntry;
                     return true;
                 }
             }
+            //lowest priority
+            count++;
+            back = (back + 1) % ARRAY_SIZE;
+            priority_queue[back] = newEntry;
+            return true;
         }
         else //priority queue is empty
         {
             count++;
-            back = (back + 1) % ARRAY_SIZE;
+            back++;
             priority_queue[back] = newEntry;
             return true;
         }
@@ -79,7 +83,6 @@ public:
     }
 
     ~priorityQueue() { }
-
 };
 
 #endif
