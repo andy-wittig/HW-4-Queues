@@ -5,18 +5,16 @@ class Event
 {
 private:
 	int time;
-	int duration;
 	char type; //'A' is arrival, 'D' is departure
 public:
 	//constructor
 	Event()
 	{
 		time = 0;
-		duration = 0;
 		type = ' ';
 	}
-	Event(int eventTime, int eventDuration, char eventType)
-		: time(eventTime), duration(eventDuration), type(eventType) { }
+	Event(int eventTime, char eventType)
+		: time(eventTime), type(eventType) { }
 	
 	//overloaded operators
 	bool operator >(Event& otherEvent)
@@ -26,25 +24,25 @@ public:
 		else if (type == 'A' && otherEvent.type == 'D') { return false; }
 		else if (type == 'A' && otherEvent.type == 'A')
 		{
-			if (duration > otherEvent.duration) { return true; }
+			if (time > otherEvent.time) { return true; }
 			else { return false; }
 		}
 		else if (type == 'D' && otherEvent.type == 'D')
 		{
-			if (duration > otherEvent.duration) { return true; }
+			if (time > otherEvent.time) { return true; }
 			else { return false; }
 		}
 	}
 
 	//getters
-	int getDuration() const
-	{
-		return duration;
-	}
-
 	int getTime() const
 	{
 		return time;
+	}
+
+	char getType() const
+	{
+		return type;
 	}
 	//setters
 };

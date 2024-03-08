@@ -15,7 +15,7 @@ private:
     int front;
     int back;
     int count;
-    static const int ARRAY_SIZE = 5;
+    static const int ARRAY_SIZE = 100;
     ItemType priority_queue[ARRAY_SIZE];
 public:
     priorityQueue() : back(-1), front(0), count(0) { }
@@ -79,7 +79,8 @@ public:
         cout << "Priority Queue:" << endl;
         for (int i = 0; i < count; i++)
         {
-            cout << priority_queue[(front + i) % ARRAY_SIZE].getDuration() << endl;
+            cout << priority_queue[(front + i) % ARRAY_SIZE].getTime() 
+                << ", type:" << priority_queue[(front + i) % ARRAY_SIZE].getType() << endl;
         }
     }
 

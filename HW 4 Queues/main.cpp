@@ -1,5 +1,9 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
 #include <string>
+
 using namespace std;
 
 #include "arrayQueue.h"
@@ -19,12 +23,30 @@ void peekArrayQueue(arrayQueue<string>&);
 void enqueueToPriorityQueue(priorityQueue<Event>&);
 void dequeuePriorityQueue(priorityQueue<Event>&);
 
+//Bank Simulation
+void bankSimulation(int arrivalTime[], int transactionLength[], priorityQueue<Event>& queue);
+
 int main()
 {
-	int menuChoice;
+    //Read input file
+    ifstream input_file;
+    input_file.open("input.txt");
+    int arrival_times[100];
+    int transaction_times[100];
+    
+    string get_line;
+    int i = 0;
+    while (getline(input_file, get_line))
+    {
+        stringstream stream_line(get_line);
+        stream_line >> arrival_times[i] >> transaction_times[i];
+        i++;
+    }
+
     arrayQueue<string> array_queue;
     priorityQueue<Event> priority_queue;
 
+    int menuChoice;
 	do
 	{
 		menuChoice = getMenuChoice();
@@ -51,6 +73,9 @@ int main()
         case 7:
             dequeuePriorityQueue(priority_queue);
             break;
+        case 8:
+            bankSimulation(arrival_times, transaction_times, priority_queue);
+            break;
         case 0:
             break;
         default:
@@ -65,8 +90,7 @@ int main()
 int getMenuChoice() {
     int userChoice;
 
-    cout << endl << "~Array Queue Testing~" << endl;
-    cout << "0. Exit." << endl;
+    cout << "\n0. Exit." << endl;
     cout << "1. Enqueue item to array queue." << endl;
 	cout << "2. Dequeue item from array queue." << endl;
 	cout << "3. Check if array queue is empty." << endl;
@@ -75,6 +99,8 @@ int getMenuChoice() {
     cout << "~Priority Queue Testing~" << endl;
     cout << "6. Enqueue items to the priority queue." << endl;
     cout << "7. Dequeue items from the priority queue." << endl;
+    cout << "~Bank Simulation~" << endl;
+    cout << "8. Run bank simulation." << endl;
 
     cin >> userChoice;
     return userChoice;
@@ -126,10 +152,10 @@ void peekArrayQueue(arrayQueue<string>& queue)
 void enqueueToPriorityQueue(priorityQueue<Event>& queue)
 {
     cout << "What value would you like to enqueue?" << endl;
-    int duration_;
-    cin >> duration_;
-    Event event1(0, duration_, 'A');    
-    queue.enqueue(event1);
+    int time;
+    cin >> time;
+    Event event(time, 'A');
+    queue.enqueue(event);
     queue.displayQueue();
 }
 
@@ -137,5 +163,22 @@ void dequeuePriorityQueue(priorityQueue<Event>& queue)
 {
     cout << "Deleting the front item from the queue." << endl;
     queue.dequeue();
+    queue.displayQueue();
+}
+
+void bankSimulation(int arrivalTime[], int transactionLength[], priorityQueue<Event>& queue)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        int departure_time = arrivalTime[i] + transactionLength[i];
+
+        Event arrival_event(arrivalTime[i], 'A');
+        Event departure_event(departure_time, 'D');
+
+        queue.enqueue(arrival_event);
+        queue.enqueue(departure_event);
+    }
+
+    cout << "Bank Simulation:" << endl;
     queue.displayQueue();
 }

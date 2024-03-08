@@ -12,7 +12,7 @@ private:
     int front;
 	int back;
     int count;
-    static const int ARRAY_SIZE = 5;
+    static const int ARRAY_SIZE = 100;
     ItemType array_queue[ARRAY_SIZE];
 public:
     arrayQueue() : back(-1), front(0), count(0) { }
