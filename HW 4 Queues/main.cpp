@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cstdio>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -10,49 +10,52 @@ using namespace std;
 #include "priorityQueue.h"
 #include "event.h"
 
-int getMenuChoice();
+//Array queue function declatrations
+void enqueueToArrayQueue(arrayQueue<Event>&);
+void dequeueToArrayQueue(arrayQueue<Event>&);
+void isArrayQueueEmpty(arrayQueue<Event>&);
+void displayArrayQueue(arrayQueue<Event>&);
+void peekArrayQueue(arrayQueue<Event>&);
 
-//Array Queue
-void enqueueToArrayQueue(arrayQueue<string>&);
-void dequeueToArrayQueue(arrayQueue<string>&);
-void isArrayQueueEmpty(arrayQueue<string>&);
-void displayArrayQueue(arrayQueue<string>&);
-void peekArrayQueue(arrayQueue<string>&);
-
-//Priority Queue
+//Priority queue function declatrations
 void enqueueToPriorityQueue(priorityQueue<Event>&);
 void dequeuePriorityQueue(priorityQueue<Event>&);
 
-//Bank Simulation
-void bankSimulation(int arrivalTime[], int transactionLength[], priorityQueue<Event>& queue);
+//Bank Simulation function declatration
+void bankSimulation(vector<int> arrivalTime, vector<int> transactionLength);
+
+int getMenuChoice();
 
 int main()
 {
-    //Read input file
+    //Read input.txt file
     ifstream input_file;
     input_file.open("input.txt");
-    int arrival_times[100];
-    int transaction_times[100];
-    
+    vector<int> arrival_vect;
+    vector<int> transaction_vect;
     string get_line;
-    int i = 0;
+
     while (getline(input_file, get_line))
     {
         stringstream stream_line(get_line);
-        stream_line >> arrival_times[i] >> transaction_times[i];
-        i++;
+        int elem_1, elem_2;
+        stream_line >> elem_1 >> elem_2;
+        arrival_vect.push_back(elem_1);
+        transaction_vect.push_back(elem_2);
     }
 
-    arrayQueue<string> array_queue;
+    //Initiate class instances
+    arrayQueue<Event> array_queue;
     priorityQueue<Event> priority_queue;
 
+    //Menu logic
     int menuChoice;
 	do
 	{
 		menuChoice = getMenuChoice();
 
         switch (menuChoice) {
-        case 1://Array Queue
+        case 1://Array queue
             enqueueToArrayQueue(array_queue);
             break;
         case 2:
@@ -67,14 +70,14 @@ int main()
         case 5:
             peekArrayQueue(array_queue);
             break;
-        case 6://Priority Queue
+        case 6://Priority queue
             enqueueToPriorityQueue(priority_queue);
             break;
         case 7:
             dequeuePriorityQueue(priority_queue);
             break;
-        case 8:
-            bankSimulation(arrival_times, transaction_times, priority_queue);
+        case 8: //Bank simulation
+            bankSimulation(arrival_vect, transaction_vect);
             break;
         case 0:
             break;
@@ -106,25 +109,24 @@ int getMenuChoice() {
     return userChoice;
 }
 
-//Array Queue Functions
-void displayArrayQueue(arrayQueue<string>& queue)
+//Array queue functions
+void displayArrayQueue(arrayQueue<Event>& queue)
 {
     cout << "Array queue:" << endl;
     queue.displayQueue();
 }
 
-void enqueueToArrayQueue(arrayQueue<string>& queue)
+void enqueueToArrayQueue(arrayQueue<Event>& queue)
 {
-    string newItem;
-
-    cout << "What is the new item to add to the queue?" << endl;
-    getline(cin, newItem);
-    getline(cin, newItem);
-
-    queue.enqueue(newItem);
+    cout << "What value would you like to enqueue?" << endl;
+    int time;
+    cin >> time;
+    Event event(time, 0, 'A');
+    queue.enqueue(event);
+    queue.displayQueue();
 }
 
-void dequeueToArrayQueue(arrayQueue<string>& queue)
+void dequeueToArrayQueue(arrayQueue<Event>& queue)
 {
     cout << "Deleting the front item from the queue." << endl;
     queue.dequeue();
@@ -132,29 +134,29 @@ void dequeueToArrayQueue(arrayQueue<string>& queue)
     queue.displayQueue();
 }
 
-void isArrayQueueEmpty(arrayQueue<string>& queue)
+void isArrayQueueEmpty(arrayQueue<Event>& queue)
 {
     bool arrayQueueEmpty = queue.isEmpty();
     if (arrayQueueEmpty) { cout << "The array queue is empty." << endl; }
     else { cout << "The array queue is holding items." << endl; }
 }
 
-void peekArrayQueue(arrayQueue<string>& queue)
+void peekArrayQueue(arrayQueue<Event>& queue)
 {
     bool canPeek = !queue.isEmpty();
     if (canPeek) {
-        cout << "The front item is: " << queue.peekFront() << endl;
+        cout << "The front item is: " << queue.peekFront().getTime() << endl;
     }
     else { cout << "The array queue is empty, and cannot peak!" << endl; }
 }
 
-//Priority Queue Functions
+//Priority queue functions
 void enqueueToPriorityQueue(priorityQueue<Event>& queue)
 {
     cout << "What value would you like to enqueue?" << endl;
     int time;
     cin >> time;
-    Event event(time, 'A');
+    Event event(time, 0, 'A');
     queue.enqueue(event);
     queue.displayQueue();
 }
@@ -166,19 +168,57 @@ void dequeuePriorityQueue(priorityQueue<Event>& queue)
     queue.displayQueue();
 }
 
-void bankSimulation(int arrivalTime[], int transactionLength[], priorityQueue<Event>& queue)
+//Bank simulation functions
+void bankSimulation(vector<int> arrivalTime, vector<int> transactionLength)
 {
-    for (int i = 0; i < 4; i++)
+    priorityQueue<Event> bankPQueue;
+    arrayQueue<Event> bankLine;
+
+    //Init bank priority queue with arrival events
+    for (int i = 0; i < arrivalTime.size(); i++) 
     {
-        int departure_time = arrivalTime[i] + transactionLength[i];
-
-        Event arrival_event(arrivalTime[i], 'A');
-        Event departure_event(departure_time, 'D');
-
-        queue.enqueue(arrival_event);
-        queue.enqueue(departure_event);
+        Event arrival_event(arrivalTime[i], transactionLength[i], 'A');
+        arrival_event.displayEvent();
+        bankPQueue.enqueue(arrival_event);
     }
 
-    cout << "Bank Simulation:" << endl;
-    queue.displayQueue();
+    bool tellerAvailable = true;
+
+    while (!bankPQueue.isEmpty()) //events remain to be processed
+    {
+        Event newEvent = bankPQueue.peekFront();
+        int currentTime = newEvent.getTime();
+        int currentTransactionLength = newEvent.getTransactionLength();
+        
+        if (newEvent.getType() == 'A') //process arrival event
+        {
+            bankPQueue.dequeue(); //remove arrival event
+            //update bank line
+            if (bankLine.isEmpty() && tellerAvailable)
+            {
+                int departure_time = currentTime + currentTransactionLength;
+                Event departure_event(departure_time, 0, 'D');
+                bankPQueue.enqueue(departure_event);
+                tellerAvailable = false;
+            }
+            else { bankLine.enqueue(newEvent); }
+            //bankPQueue.displayQueue();
+            //bankLine.displayQueue();
+        }
+        else //process departure event
+        {
+            bankPQueue.dequeue(); //remove departure event
+            if (!bankLine.isEmpty())
+            {
+                Event customer = bankLine.peekFront();
+                bankLine.dequeue();
+                int departure_time = currentTime + customer.getTransactionLength();
+                Event departure_event(departure_time, 0, 'D');
+                bankPQueue.enqueue(departure_event);
+            }
+            else { tellerAvailable = true; }
+            //bankPQueue.displayQueue();
+            //bankLine.displayQueue();
+        }
+    }
 }

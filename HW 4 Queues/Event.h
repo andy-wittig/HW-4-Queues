@@ -5,39 +5,46 @@ class Event
 {
 private:
 	int time;
+	int transaction_length;
 	char type; //'A' is arrival, 'D' is departure
 public:
 	//constructor
 	Event()
 	{
 		time = 0;
+		transaction_length = 0;
 		type = ' ';
 	}
-	Event(int eventTime, char eventType)
-		: time(eventTime), type(eventType) { }
+	Event(int eventTime, int transactionLength, char eventType)
+		: time(eventTime), transaction_length(transactionLength), type(eventType) { }
 	
 	//overloaded operators
-	bool operator >(Event& otherEvent)
+	bool operator <(const Event& otherEvent)
 	{
-		//someone who is departing takes priority over someone who is arriving
-		if (type == 'D' && otherEvent.type == 'A') { return true; }
-		else if (type == 'A' && otherEvent.type == 'D') { return false; }
-		else if (type == 'A' && otherEvent.type == 'A')
+		if (time == otherEvent.time)
 		{
-			if (time > otherEvent.time) { return true; }
-			else { return false; }
+			if (type != otherEvent.type) //arbitrarily process arrivals first
+			{
+				return type < otherEvent.type;
+			}
 		}
-		else if (type == 'D' && otherEvent.type == 'D')
-		{
-			if (time > otherEvent.time) { return true; }
-			else { return false; }
-		}
+		return time < otherEvent.time;
+	}	
+	
+	void displayEvent()
+	{
+		cout << time << "   " << transaction_length << endl;
 	}
 
 	//getters
 	int getTime() const
 	{
 		return time;
+	}
+
+	int getTransactionLength() const
+	{
+		return transaction_length;
 	}
 
 	char getType() const

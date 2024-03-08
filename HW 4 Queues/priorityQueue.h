@@ -32,7 +32,7 @@ public:
         for (int i = 0; i < count; i++)
         {
             int current_position = (front + i) % ARRAY_SIZE;
-            if (newEntry > priority_queue[current_position])
+            if (newEntry < priority_queue[current_position])
             {
                 count++;
                 back = (back + 1) % ARRAY_SIZE; //extend array

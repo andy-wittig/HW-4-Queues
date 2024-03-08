@@ -57,14 +57,15 @@ public:
 
     void displayQueue()
     {
+        cout << "Array Queue:" << endl;
         for (int i = 0; i < count; i++)
         {
-            cout << array_queue[(front + i) % ARRAY_SIZE] << endl;
+            cout << array_queue[(front + i) % ARRAY_SIZE].getTime()
+                << ", type:" << array_queue[(front + i) % ARRAY_SIZE].getType() << endl;
         }
     }
 
     ~arrayQueue() { }
-
 };
 
 #endif
