@@ -48,6 +48,9 @@ int main()
     arrayQueue<Event> array_queue;
     priorityQueue<Event> priority_queue;
 
+    //Run simulation to test
+    bankSimulation(arrival_vect, transaction_vect);
+
     //Menu logic
     int menuChoice;
 	do
@@ -178,12 +181,14 @@ void bankSimulation(vector<int> arrivalTime, vector<int> transactionLength)
     for (int i = 0; i < arrivalTime.size(); i++) 
     {
         Event arrival_event(arrivalTime[i], transactionLength[i], 'A');
-        arrival_event.displayEvent();
+        //arrival_event.displayEvent();
         bankPQueue.enqueue(arrival_event);
     }
 
     bool tellerAvailable = true;
+    float wait_time = 0;
 
+    cout << "Simulation Begins" << endl;
     while (!bankPQueue.isEmpty()) //events remain to be processed
     {
         Event newEvent = bankPQueue.peekFront();
@@ -192,6 +197,7 @@ void bankSimulation(vector<int> arrivalTime, vector<int> transactionLength)
         
         if (newEvent.getType() == 'A') //process arrival event
         {
+            if (!bankPQueue.isEmpty()) { cout << "Processing an arrival event at time: " << bankPQueue.peekFront().getTime() << endl; }
             bankPQueue.dequeue(); //remove arrival event
             //update bank line
             if (bankLine.isEmpty() && tellerAvailable)
@@ -202,23 +208,27 @@ void bankSimulation(vector<int> arrivalTime, vector<int> transactionLength)
                 tellerAvailable = false;
             }
             else { bankLine.enqueue(newEvent); }
-            //bankPQueue.displayQueue();
-            //bankLine.displayQueue();
         }
         else //process departure event
         {
+            if (!bankPQueue.isEmpty()) { cout << "Processing a depature event at time: " << bankPQueue.peekFront().getTime() << endl; }
             bankPQueue.dequeue(); //remove departure event
             if (!bankLine.isEmpty())
             {
                 Event customer = bankLine.peekFront();
                 bankLine.dequeue();
                 int departure_time = currentTime + customer.getTransactionLength();
+                wait_time = wait_time + (currentTime - customer.getTime());
                 Event departure_event(departure_time, 0, 'D');
                 bankPQueue.enqueue(departure_event);
             }
             else { tellerAvailable = true; }
-            //bankPQueue.displayQueue();
-            //bankLine.displayQueue();
         }
     }
+    cout << "Simulation Ends\n" << endl;
+    float avg_wait = (wait_time / arrivalTime.size());
+    int n_customers = arrivalTime.size();
+    cout << "Final Statistics:" << endl;
+    cout << "Total number of people processed: " << n_customers << endl;
+    cout << "Average amount of time spent waiting: " << avg_wait << endl;
 }
