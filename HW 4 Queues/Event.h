@@ -9,7 +9,7 @@ private:
 	char type; //'A' is arrival, 'D' is departure
 public:
 	//constructor
-	Event() 
+	Event()
 	{
 		time = 0;
 		duration = 0;
@@ -36,11 +36,17 @@ public:
 		}
 	}
 
-	//getters and setters
+	//getters
 	int getDuration() const
 	{
 		return duration;
 	}
+
+	int getTime() const
+	{
+		return time;
+	}
+	//setters
 };
 
 #endif

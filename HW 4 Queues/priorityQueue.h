@@ -15,53 +15,53 @@ private:
     int front;
     int back;
     int count;
-    static const int ARRAY_SIZE = 10;
+    static const int ARRAY_SIZE = 5;
     ItemType priority_queue[ARRAY_SIZE];
 public:
     priorityQueue() : back(-1), front(0), count(0) { }
 
     bool isEmpty() const
     {
-        bool empty(count <= 0);
-        return empty;
+        return count <= 0;
     }
 
     bool enqueue(ItemType& newEntry)
     {
-        if (!isEmpty())
+        if (count >= ARRAY_SIZE) { return false; } //array at capacity
+        
+        for (int i = 0; i < count; i++)
         {
-            for (int i = 0; i <= count; i++) //loop through entire usable queue
+            int current_position = (front + i) % ARRAY_SIZE;
+            if (newEntry > priority_queue[current_position])
             {
-                int current_position = front + i % ARRAY_SIZE;
-                if (newEntry > priority_queue[current_position])
+                count++;
+                back = (back + 1) % ARRAY_SIZE; //extend array
+                int temp = back;
+                while (temp != current_position)
                 {
-                    count++;
-                    back = (back + 1) % ARRAY_SIZE; //extend array
-                    for (int i = back; i > current_position; i--) { //shift array and add new element in
-                        priority_queue[i] = priority_queue[i - 1];
-                    }
-                    priority_queue[i] = newEntry;
-                    return true;
+                    priority_queue[temp] = priority_queue[(temp - 1 + ARRAY_SIZE) % ARRAY_SIZE];
+                    temp = (temp - 1 + ARRAY_SIZE) % ARRAY_SIZE;
                 }
+                priority_queue[current_position] = newEntry;
+                return true;
             }
-            //lowest priority
-            count++;
-            back = (back + 1) % ARRAY_SIZE;
-            priority_queue[back] = newEntry;
-            return true;
         }
-        else //priority queue is empty
-        {
-            count++;
-            back++;
-            priority_queue[back] = newEntry;
-            return true;
-        }
+        count++;
+        back = (back + 1) % ARRAY_SIZE;
+        priority_queue[back] = newEntry;
+        return true;
     }
 
     bool dequeue()
     {
-        return true;
+        bool canDequeue = !isEmpty();
+        if (canDequeue)
+        {
+            count--;
+            front = (front + 1) % ARRAY_SIZE;
+            return true;
+        }
+        else { return false; }
     }
 
     ItemType peekFront() const
@@ -76,6 +76,7 @@ public:
 
     void displayQueue()
     {
+        cout << "Priority Queue:" << endl;
         for (int i = 0; i < count; i++)
         {
             cout << priority_queue[(front + i) % ARRAY_SIZE].getDuration() << endl;

@@ -17,6 +17,7 @@ void peekArrayQueue(arrayQueue<string>&);
 
 //Priority Queue
 void enqueueToPriorityQueue(priorityQueue<Event>&);
+void dequeuePriorityQueue(priorityQueue<Event>&);
 
 int main()
 {
@@ -47,6 +48,9 @@ int main()
         case 6://Priority Queue
             enqueueToPriorityQueue(priority_queue);
             break;
+        case 7:
+            dequeuePriorityQueue(priority_queue);
+            break;
         case 0:
             break;
         default:
@@ -69,7 +73,8 @@ int getMenuChoice() {
     cout << "4. Display array queue." << endl;
     cout << "5. Peek top of array queue." << endl;
     cout << "~Priority Queue Testing~" << endl;
-    cout << "6. Enqueue item to priority queue." << endl;
+    cout << "6. Enqueue items to the priority queue." << endl;
+    cout << "7. Dequeue items from the priority queue." << endl;
 
     cin >> userChoice;
     return userChoice;
@@ -120,16 +125,17 @@ void peekArrayQueue(arrayQueue<string>& queue)
 //Priority Queue Functions
 void enqueueToPriorityQueue(priorityQueue<Event>& queue)
 {
-    cout << "Enqueing four test items." << endl;
-
-    Event event1(3, 1, 'D');
-    Event event2(12, 200, 'A');
-    Event event3(13, 400, 'A');
-    
+    cout << "What value would you like to enqueue?" << endl;
+    int duration_;
+    cin >> duration_;
+    Event event1(0, duration_, 'A');    
     queue.enqueue(event1);
-    queue.enqueue(event2);
-    queue.enqueue(event3);
-    //should be 1, 400, 200
+    queue.displayQueue();
+}
 
+void dequeuePriorityQueue(priorityQueue<Event>& queue)
+{
+    cout << "Deleting the front item from the queue." << endl;
+    queue.dequeue();
     queue.displayQueue();
 }
